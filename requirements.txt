@@ -1,0 +1,3 @@
+pyright
+ruff
+advent-of-code-data
