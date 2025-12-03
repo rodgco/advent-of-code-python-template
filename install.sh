@@ -6,11 +6,14 @@
 #
 # This script:
 # 1. Sets up the 'aoc-update' alias for easy project updates
-# 2. Initializes the Python environment
-# 3. Installs project dependencies
+# 2. Installs uv (if not already installed)
+# 3. Installs project dependencies via uv
+#
+# Requirements:
+#     - Python 3.12 or higher
+#     - curl or wget (for downloading uv)
 #
 # Options:
-#     --venv         Force use of venv + pip instead of uv (even if uv is installed)
 #     --help         Show this help message
 
 set -e
@@ -19,22 +22,21 @@ SHELL_RC=""
 ALIAS_CMD="alias aoc-update='curl -sSL https://raw.githubusercontent.com/rodgco/advent-of-code-python-template/main/scripts/update.sh | sh'"
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PYTHON_MIN_VERSION="3.12"
-FORCE_VENV=false
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
-        --venv)
-            FORCE_VENV=true
-            shift
-            ;;
         --help)
             echo "Installation script for Advent of Code Python Template"
             echo ""
             echo "Usage: ./install.sh [OPTIONS]"
             echo ""
+            echo "This script sets up your project by:"
+            echo "  1. Installing uv (if not already installed)"
+            echo "  2. Setting up the aoc-update alias"
+            echo "  3. Installing project dependencies"
+            echo ""
             echo "Options:"
-            echo "  --venv   Force use of venv + pip instead of uv"
             echo "  --help   Show this help message"
             exit 0
             ;;
@@ -105,7 +107,39 @@ setup_alias() {
     return 0
 }
 
-# Initialize Python environment using uv or venv
+# Check and install uv if needed
+install_uv_if_needed() {
+    if command -v uv &> /dev/null; then
+        echo "✓ uv is already installed"
+        return 0
+    fi
+
+    echo "ℹ️  uv not found, installing..."
+
+    # Try to detect the system and architecture
+    if command -v curl &> /dev/null; then
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+    elif command -v wget &> /dev/null; then
+        wget -qO- https://astral.sh/uv/install.sh | sh
+    else
+        echo "⚠️  curl or wget not found, cannot install uv automatically"
+        echo "Please install uv manually from https://github.com/astral-sh/uv"
+        return 1
+    fi
+
+    # Add uv to PATH for this session
+    export PATH="$HOME/.local/bin:$PATH"
+
+    if ! command -v uv &> /dev/null; then
+        echo "⚠️  uv installation may have failed. Please verify installation."
+        return 1
+    fi
+
+    echo "✓ uv installed successfully"
+    return 0
+}
+
+# Initialize Python environment using uv
 setup_environment() {
     if [ ! -f "$PROJECT_ROOT/pyproject.toml" ]; then
         echo "ℹ️  No pyproject.toml found in $PROJECT_ROOT"
@@ -118,43 +152,22 @@ setup_environment() {
 
     # Check Python version first
     if ! check_python_version "python3"; then
-        echo "⚠️  Python 3.14+ is required, but $(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))') is installed"
+        echo "⚠️  Python 3.12+ is required, but $(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))') is installed"
         return 1
     fi
 
-    # Try uv first (unless --venv was specified)
-    if [ "$FORCE_VENV" = false ] && command -v uv &> /dev/null; then
-        echo "✓ Using uv for environment setup"
-        uv sync
-        if [ -f "$PROJECT_ROOT/requirements.txt" ]; then
-            uv add -r requirements.txt || true
-        fi
-        echo "✓ Environment setup complete with uv"
-        return 0
+    # Install uv if needed
+    if ! install_uv_if_needed; then
+        return 1
     fi
 
-    # Use venv + pip (either because uv not found or --venv was specified)
-    if [ "$FORCE_VENV" = true ]; then
-        echo "✓ Using venv + pip (as requested with --venv)"
-    else
-        echo "ℹ️  uv not found, using venv + pip"
-    fi
-    python3 -m venv venv
-
-    # Activate venv
-    if [ -f "venv/bin/activate" ]; then
-        source venv/bin/activate
-    else
-        source venv/Scripts/activate
-    fi
-
-    pip install --upgrade pip
+    # Use uv to set up environment
+    echo "✓ Using uv for environment setup"
+    uv sync
     if [ -f "$PROJECT_ROOT/requirements.txt" ]; then
-        pip install -r requirements.txt
+        uv add -r requirements.txt || true
     fi
-
-    echo "✓ Environment setup complete with venv"
-    echo "ℹ️  Activate venv with: source venv/bin/activate (or venv\Scripts\activate on Windows)"
+    echo "✓ Environment setup complete"
     return 0
 }
 

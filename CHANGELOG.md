@@ -14,24 +14,25 @@ _released `2025-12-02`_
 
 ### New Features
 
-- :sparkles: add `install.sh` script for one-time local setup (alias + environment initialization)
+- :sparkles: add `install.sh` script for one-time local setup (uv installation + alias + environment initialization)
 - :sparkles: add `scripts/update.sh` for easy template synchronization via `aoc-update` alias
-- :sparkles: add `--venv` flag to `install.sh` to force venv + pip over uv
-- :sparkles: support both uv and venv + pip in `install.sh` with smart fallback
-- :sparkles: detect and enforce Python 3.14+ requirement in `install.sh`
+- :sparkles: auto-install uv from `https://astral.sh/uv/install.sh` if not already present
+- :sparkles: project now fully standardized on uv as the package manager
 
 ### Improvements
 
-- improved setup workflow: users now run `./install.sh` once after cloning instead of curl commands
+- simplified setup workflow: users run `./install.sh` once after cloning and everything is configured
 - streamlined project updates with `aoc-update` alias (no need to remember long curl commands)
+- all scripts (`./advent`, `./start`) now depend on uv, ensuring consistent tool usage across the project
 - scripts organized in dedicated `scripts/` folder for better project structure
-- enhanced user experience with clear feedback on environment setup process
+- enhanced user experience with clear feedback on environment setup process and uv installation
 
 ### Internal Updates
 
 - `install.sh` synced as template file (stable, runs once locally)
 - `scripts/update.sh` excluded from sync (always fetches fresh from remote)
-- updated README with new setup instructions
+- `./advent` and `./start` scripts use `#!/usr/bin/env -S uv run --script` shebang
+- updated README with new setup instructions emphasizing uv dependency
 
 ## 5.0.0
 

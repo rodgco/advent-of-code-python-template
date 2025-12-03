@@ -14,7 +14,12 @@ To use this base class for your own solutions:
    ```bash
    ./install.sh
    ```
-   This will set up the `aoc-update` alias and initialize your Python environment. Optional: use `./install.sh --venv` to force venv + pip instead of uv, or `./install.sh --help` for more options.
+   This will:
+   - Install [uv](https://github.com/astral-sh/uv) if not already installed
+   - Set up the `aoc-update` alias for easy template synchronization
+   - Initialize your Python environment and install dependencies via uv
+
+   Use `./install.sh --help` for more information.
 4. Set up your Advent of Code session token for the [aocd](https://github.com/wimglenn/advent-of-code-data) library. You can either:
    - Set the `AOC_SESSION` environment variable to your session cookie value
    - Create `~/.config/aocd/token` file containing your session cookie
