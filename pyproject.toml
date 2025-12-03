@@ -1,0 +1,7 @@
+[project]
+name = "advent-of-code-python-template"
+version = "0.1.0"
+description = "Enhanced Python template for Advent of Code solutions with automatic input/output handling"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []

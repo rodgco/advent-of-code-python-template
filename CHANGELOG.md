@@ -8,6 +8,31 @@ Below is a rough changelog of new features added, which largely follows [SemVer]
 - Minor versions add new, backwards-compatible features you may want to start using
 - Patch versions are internal functionality updates or changes to the template that won't affect compatibility with existing solutions
 
+## 5.1.0
+
+_released `2025-12-02`_
+
+### New Features
+
+- :sparkles: add `install.sh` script for one-time local setup (alias + environment initialization)
+- :sparkles: add `scripts/update.sh` for easy template synchronization via `aoc-update` alias
+- :sparkles: add `--venv` flag to `install.sh` to force venv + pip over uv
+- :sparkles: support both uv and venv + pip in `install.sh` with smart fallback
+- :sparkles: detect and enforce Python 3.14+ requirement in `install.sh`
+
+### Improvements
+
+- improved setup workflow: users now run `./install.sh` once after cloning instead of curl commands
+- streamlined project updates with `aoc-update` alias (no need to remember long curl commands)
+- scripts organized in dedicated `scripts/` folder for better project structure
+- enhanced user experience with clear feedback on environment setup process
+
+### Internal Updates
+
+- `install.sh` synced as template file (stable, runs once locally)
+- `scripts/update.sh` excluded from sync (always fetches fresh from remote)
+- updated README with new setup instructions
+
 ## 5.0.0
 
 _released `2025-12-02`_
@@ -26,7 +51,7 @@ This version documents enhancements and features that were added in the enhanced
 
 ### Breaking Changes
 
-- :exclamation: require Python `3.12+` (was already in place but now firmly established)
+- None in this version
 
 ### Improvements
 

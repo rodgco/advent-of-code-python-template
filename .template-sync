@@ -1,0 +1,11 @@
+# Files and directories to sync from the template repository
+# Note: scripts/update.sh is intentionally excluded to avoid self-update issues when
+# it's piped from curl. Users should always fetch the latest version from the
+# template repository. The install.sh script is included as it only runs once locally.
+
+install.sh
+advent
+start
+misc/
+solutions/base.py
+requirements.txt

@@ -10,14 +10,20 @@ To use this base class for your own solutions:
 
 1. Ensure you have Python `3.12` or higher. You can use [mise](https://mise.jdx.dev/) or [pyenv](https://github.com/pyenv/pyenv) to manage your Python versions. It may work on older versions, but `3.12`-specific features will be added without further breaking changes
 2. Create a new repo using this template ([docs](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template#creating-a-repository-from-a-template)) and clone it locally
-3. Set up your Advent of Code session token for the [aocd](https://github.com/wimglenn/advent-of-code-data) library. You can either:
+3. Run the setup script from the repo root:
+   ```bash
+   ./install.sh
+   ```
+   This will set up the `aoc-update` alias and initialize your Python environment. Optional: use `./install.sh --venv` to force venv + pip instead of uv, or `./install.sh --help` for more options.
+4. Set up your Advent of Code session token for the [aocd](https://github.com/wimglenn/advent-of-code-data) library. You can either:
    - Set the `AOC_SESSION` environment variable to your session cookie value
    - Create `~/.config/aocd/token` file containing your session cookie
    - See [aocd documentation](https://github.com/wimglenn/advent-of-code-data#setup) for more details on how to get your session token
-4. Start a new solution using `./start`
-5. Edit the newly created file at `solutions/YEAR/day_01/solution.py`
-6. Run your code answers using `./advent`
-7. Repeat and enjoy!
+5. Start a new solution using `./start`
+6. Edit the newly created file at `solutions/YEAR/day_01/solution.py`
+7. Run your code answers using `./advent`
+8. To keep your project synced with template updates, use: `aoc-update`
+9. Repeat and enjoy!
 
 ## Commands
 
