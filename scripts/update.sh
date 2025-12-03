@@ -43,6 +43,8 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+pwd
+
 # Get the project root directory
 # Use PWD directly since this script may be piped from curl where BASH_SOURCE[0] is unreliable
 if [ -f ".template-sync" ]; then
@@ -55,6 +57,8 @@ else
     # Fallback: use the script's directory parent
     PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 fi
+
+echo $PROJECT_ROOT
 
 # Create temporary directory
 TEMP_DIR=$(mktemp -d -t aoc_template.XXXXXX)
@@ -145,6 +149,7 @@ while IFS= read -r line || [ -n "$line" ]; do
         dest_path="${dest_path%/}"
         update_dir "$source_path" "$dest_path"
     else
+        echo "$source_path" "$dest_path"
         update_file "$source_path" "$dest_path"
     fi
 done < "$TEMP_DIR/$CONFIG_FILE"
