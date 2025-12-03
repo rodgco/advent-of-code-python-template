@@ -92,7 +92,7 @@ update_file() {
         echo "✓ Updated: $filename"
     fi
 
-    ((UPDATED_COUNT++))
+    ((UPDATED_COUNT++)) || true
 }
 
 # Function to update a directory
@@ -114,7 +114,7 @@ update_dir() {
         echo "✓ Updated: $dirname/"
     fi
 
-    ((UPDATED_COUNT++))
+    ((UPDATED_COUNT++)) || true
 }
 
 # Read and process each line from config file
