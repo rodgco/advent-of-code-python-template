@@ -19,7 +19,7 @@
 set -e
 
 SHELL_RC=""
-ALIAS_CMD="alias aoc-update='curl -sSL https://raw.githubusercontent.com/rodgco/advent-of-code-python-template/main/scripts/update.sh | sh'"
+ALIAS_CMD="aoc-update() { curl -sSL https://raw.githubusercontent.com/rodgco/advent-of-code-python-template/main/scripts/update.sh | sh \"\$@\"; }"
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PYTHON_MIN_VERSION="3.12"
 
@@ -33,7 +33,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "This script sets up your project by:"
             echo "  1. Installing uv (if not already installed)"
-            echo "  2. Setting up the aoc-update alias"
+            echo "  2. Setting up the aoc-update function"
             echo "  3. Installing project dependencies"
             echo ""
             echo "Options:"
@@ -92,18 +92,18 @@ setup_alias() {
         return 1
     fi
 
-    # Check if alias already exists
-    if grep -q "alias aoc-update=" "$SHELL_RC" 2>/dev/null; then
-        echo "✓ aoc-update alias already exists in $SHELL_RC"
+    # Check if alias/function already exists
+    if grep -q "aoc-update()" "$SHELL_RC" 2>/dev/null; then
+        echo "✓ aoc-update function already exists in $SHELL_RC"
         return 0
     fi
 
-    # Add the alias
+    # Add the function
     echo "" >> "$SHELL_RC"
-    echo "# Advent of Code update alias" >> "$SHELL_RC"
+    echo "# Advent of Code update function" >> "$SHELL_RC"
     echo "$ALIAS_CMD" >> "$SHELL_RC"
 
-    echo "✓ Added aoc-update alias to $SHELL_RC"
+    echo "✓ Added aoc-update function to $SHELL_RC"
     return 0
 }
 
@@ -189,6 +189,6 @@ echo "✨ Setup complete!"
 echo ""
 echo "You can now use: aoc-update [--dry-run] [--branch BRANCH]"
 echo ""
-echo "To activate the alias, either:"
+echo "To activate the function, either:"
 echo "  1. Run: source $SHELL_RC"
 echo "  2. Open a new terminal"
