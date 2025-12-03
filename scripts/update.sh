@@ -44,7 +44,17 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Get the project root directory
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Use PWD directly since this script may be piped from curl where BASH_SOURCE[0] is unreliable
+if [ -f ".template-sync" ]; then
+    # Script is run from the project root
+    PROJECT_ROOT="$(pwd)"
+elif [ -f "../.template-sync" ]; then
+    # Script is run from the scripts directory
+    PROJECT_ROOT="$(cd .. && pwd)"
+else
+    # Fallback: use the script's directory parent
+    PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+fi
 
 # Create temporary directory
 TEMP_DIR=$(mktemp -d -t aoc_template.XXXXXX)
