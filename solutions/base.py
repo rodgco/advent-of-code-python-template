@@ -50,6 +50,7 @@ class InputTypes(Enum):
     STRMATCH = auto()
     # any, split by a function
     ANYFUNCT = auto()
+    ANYFULLFUNCT = auto()
 
 
 # almost always int, but occasionally str; None is fine to disable a part
@@ -70,8 +71,9 @@ def submit_answer(i: int, ans: ResultType, year: int, day: int):
 def spinning_cursor():
     """Generator for spinner characters."""
     while True:
-        for cursor in '|/-\\':
+        for cursor in "|/-\\":
             yield f"\b{cursor}"
+
 
 spinner = spinning_cursor()
 
@@ -82,17 +84,25 @@ IT = TypeVar("I", bound=InputType)
 class BaseSolution(Generic[IT]):
     separator = "\n"
     separator2 = " "
-    regexp = r','
+    regexp = r","
     spinner_count = 0
 
-    def fun(text): return text
+    def fun(text):
+        return text
 
     # Solution Subclasses define these
     input_type: InputTypes = InputTypes.TEXT
     _year: int
     _day: int
 
-    def __init__(self, run_slow=False, is_debugging=False, use_test_data=False, submit=True, show_spinner=False):
+    def __init__(
+        self,
+        run_slow=False,
+        is_debugging=False,
+        use_test_data=False,
+        submit=True,
+        show_spinner=False,
+    ):
         self.slow = run_slow  # should run slow functions?
         self.is_debugging = is_debugging
         self.use_test_data = use_test_data
@@ -153,16 +163,18 @@ class BaseSolution(Generic[IT]):
         )
         if not input_file.exists():
             raise AoCException(
-                f'Failed to find an input file at path "./{input_file.relative_to(
-                    Path.cwd())}". You can run `./start --year {self.year} {self.day}` to create it.'
+                f'Failed to find an input file at path "./{
+                    input_file.relative_to(Path.cwd())
+                }". You can run `./start --year {self.year} {self.day}` to create it.'
             )
 
         data = input_file.read_text().strip("\n")
 
         if not data:
             raise AoCException(
-                f'Found a file at path "./{input_file.relative_to(
-                    Path.cwd())}", but it was empty. Make sure to paste some input!'
+                f'Found a file at path "./{
+                    input_file.relative_to(Path.cwd())
+                }", but it was empty. Make sure to paste some input!'
             )
 
         if self.input_type is InputTypes.TEXT:
@@ -184,8 +196,7 @@ class BaseSolution(Generic[IT]):
                 return [int(i) for i in parts]
 
             if self.input_type == InputTypes.INTSPLIT2COL:
-                return zip(
-                    *(map(int, line.split(self.separator2)) for line in parts))
+                return zip(*(map(int, line.split(self.separator2)) for line in parts))
 
             if self.input_type == InputTypes.INTSPLIT2ROW:
                 return [list(map(int, line.split(self.separator2))) for line in parts]
@@ -201,6 +212,9 @@ class BaseSolution(Generic[IT]):
             parts = data.split(self.separator)
 
             return [self.fun(line) for line in parts]
+
+        if self.input_type is InputTypes.ANYFULLFUNCT:
+            return self.fun(data)
 
         raise ValueError(f"Unrecognized input_type: {self.input_type}")
 
@@ -321,6 +335,14 @@ class AnyFunSolution(BaseSolution[any]):
     input_type = InputTypes.ANYFUNCT
 
 
+class AnyFullFunSolution(BaseSolution[any]):
+    """
+    input is fully sent to the function
+    """
+
+    input_type = InputTypes.ANYFULLFUNCT
+
+
 # https://stackoverflow.com/a/65681955/1825390
 SolutionClassType = TypeVar("SolutionClassType", bound=BaseSolution)
 
@@ -407,7 +429,8 @@ def answer(
                 _, year, day, _ = self.__module__.split(".")
                 raise AoCException(
                     f"Failed @answer assertion for {year} / {day} / {
-                        func.__name__}:\n  returned: {result}\n  expected: {expected}"
+                        func.__name__
+                    }:\n  returned: {result}\n  expected: {expected}"
                 )
             return result
 

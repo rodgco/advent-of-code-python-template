@@ -85,9 +85,17 @@ def main(
         sys.exit(1)
 
     try:
+        start = perf_counter_ns()
         solution = solution_class(
             run_slow=slow, is_debugging=debug, use_test_data=test_data, submit=not(no_submit), show_spinner=show_spinner
         )
+        stop = perf_counter_ns()
+
+        if time_it:
+            print("== Setup Performance")
+            print(f"=== Setup ran in {
+                round((stop - start) / 1_000_000_000, 3)}s\n")
+
 
         start = perf_counter_ns()
         solution.run_and_print_solutions()
